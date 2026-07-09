@@ -484,7 +484,7 @@
   </p>
 
   <div class="bp-entry">
-    <input id="bp-guess-name" type="text" placeholder="Your name" maxlength="14" autocomplete="off">
+    <input id="bp-guess-name" type="text" placeholder="Your name (enter this first)" maxlength="14" autocomplete="off">
     <span class="bp-entry-note" id="bp-entry-note"></span>
   </div>
 
@@ -1020,7 +1020,7 @@
     }
 
     if (bloomed[plant]) { render(); return say(NAMES[plant] + ' already opened. Picks are closed.'); }
-    if (!me) { $('bp-guess-name').focus(); return say('Add your name first.'); }
+
     if (myGuesses().some(g => g.plant === plant)) { render(); return say(NAMES[plant] + ' is already locked in.'); }
 
     if (!bandId) { delete draft[plant]; render(); return say('Selection cleared.'); }
