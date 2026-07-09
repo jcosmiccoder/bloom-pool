@@ -1,1 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bloom Pool</title>
+<meta name="description" content="Guess when the corpse flowers at The Huntington will bloom. A friendly pool for Odorysseus and Odora.">
 
+<!-- Social preview tags — replace the og:image URL below with your own hosted image -->
+<meta property="og:title" content="The Bloom Pool">
+<meta property="og:description" content="Two corpse flowers at The Huntington. Nobody knows when they open, but it will be soon! Guess the window, enter the pool.">
+<meta property="og:image" content="REPLACE_WITH_YOUR_IMAGE_URL.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Bloom Pool">
+<meta name="twitter:description" content="Two corpse flowers at The Huntington. Nobody knows when they open, but it will be soon!">
+<meta name="twitter:image" content="REPLACE_WITH_YOUR_IMAGE_URL.jpg">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;700&display=swap');
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+
+  .bp {
+    --soil: #12160E;
+    --loam: #1E2417;
+    --edge: #2E3524;
+    --spathe: #8A9C5B;
+    --spadix: #B8455E;
+    --pink: #F0879F;
+    --bone: #E9E4D4;
+    --ash: #8C8F80;
+
+    background: var(--soil);
+    color: var(--bone);
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    padding: 30px 24px 32px;
+    max-width: 720px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+  .bp *, .bp *::before, .bp *::after { box-sizing: border-box; }
+
+  .bp-head { margin-bottom: 22px; }
+  .bp-head-row {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .bp-head-text { flex: 1 1 280px; min-width: 0; }
+
+  .bp-poem-side {
+    flex: 0 0 320px;
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border: 1px solid var(--spadix);
+    padding: 16px;
+  }
+  .bp-poem-vline {
+    width: 1px;
+    align-self: stretch;
+    background: var(--spadix);
+    flex: 0 0 auto;
+  }
+  .bp-poem {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    color: var(--ash);
+    margin: 0;
+    text-align: center;
+  }
+
+  .bp-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(32px, 7vw, 52px);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .bp-title em { font-style: italic; font-weight: 400; color: var(--spadix); }
+  .bp-sub { font-size: 14px; color: var(--ash); line-height: 1.55; margin: 12px 0 0; max-width: 46ch; }
+  .bp-prize-inline { font-weight: 700; color: var(--bone); }
+
+  .bp-links { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 0 0 22px; }
+  .bp-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--spathe); text-decoration: none;
+    border-bottom: 1px solid var(--edge); padding-bottom: 4px;
+    text-align: center;
+  }
+  .bp-links a:hover { color: var(--bone); border-bottom-color: var(--spadix); }
+  .bp-links a:focus-visible { outline: 2px solid var(--spadix); outline-offset: 3px; }
+
+  .bp-entry { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .bp-entry input { flex: 1 1 180px; width: auto; }
+  .bp-entry-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.06em; color: var(--ash);
+  }
+  .bp-entry-note.bp-ok { color: var(--spathe); }
+
+  .bp-roster { margin-top: 24px; border-top: 1px solid var(--edge); }
+  .bp-roster summary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ash); cursor: pointer; padding: 14px 0; list-style: none;
+  }
+  .bp-roster summary::-webkit-details-marker { display: none; }
+  .bp-roster summary::after { content: ' +'; }
+  .bp-roster[open] summary::after { content: ' \2013'; }
+  .bp-roster-warn {
+    font-size: 11px; color: var(--ash); line-height: 1.6;
+    border-left: 2px solid var(--edge); padding-left: 10px; margin: 16px 0 18px;
+  }
+  #bp-roster-out { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .bp-roster table {
+    width: 100%; min-width: 300px; border-collapse: collapse; margin-top: 14px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  }
+  .bp-r-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bp-roster th {
+    text-align: left; color: var(--spathe); font-weight: 400;
+    letter-spacing: 0.12em; text-transform: uppercase; font-size: 9px;
+    padding: 0 10px 8px 0; border-bottom: 1px solid var(--edge);
+  }
+  .bp-roster td { padding: 9px 10px 9px 0; color: var(--ash); border-bottom: 1px solid var(--edge); }
+  .bp-roster td.bp-r-name { color: var(--bone); }
+  .bp-roster-bad { color: var(--spadix); font-family: 'IBM Plex Mono', monospace; font-size: 11px; margin-top: 10px; }
+
+  .bp-toggle { display: flex; border: 1px solid var(--edge); width: 100%; }
+  .bp-toggle button {
+    background: transparent; color: var(--ash); border: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 0.06em;
+    padding: 13px 16px; cursor: pointer; white-space: nowrap; flex: 1;
+    text-align: center;
+  }
+  .bp-toggle button[aria-pressed="true"] { background: var(--spadix); color: #14060A; font-weight: 500; }
+
+  .bp-mine {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.04em;
+    color: var(--ash); margin: 14px 0 0;
+    display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  .bp-mine[hidden] { display: none; }
+  .bp-mine span { display: flex; gap: 7px; align-items: center; }
+  .bp-mine b { color: var(--bone); font-weight: 500; }
+  .bp-mine em { font-style: normal; color: #5E6155; }
+  .bp-mine-who {
+    color: var(--spathe); letter-spacing: 0.12em; text-transform: uppercase; font-size: 9px;
+  }
+  .bp-mine i { font-style: normal; }
+  .bp-yes { color: var(--spathe); }
+  .bp-no { color: #4A4E42; }
+  .bp-pending { color: var(--pink); }
+
+  .bp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+    gap: 6px;
+    margin: 18px 0 8px;
+  }
+  .bp-day {
+    background: var(--loam);
+    border: 1px solid var(--edge);
+    padding: 9px 9px 8px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .bp-day-top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+  .bp-day-dow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em;
+    color: var(--ash); text-transform: uppercase;
+  }
+  .bp-day-num { font-family: 'Fraunces', Georgia, serif; font-size: 22px; font-weight: 600; line-height: 1; }
+
+  .bp-day select {
+    width: 100%;
+    background: var(--soil);
+    border: 1px solid var(--edge);
+    color: var(--ash);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.04em;
+    padding: 8px 4px; border-radius: 0; cursor: pointer;
+  }
+  .bp-day select:hover { border-color: var(--spathe); color: var(--bone); }
+  .bp-day select:disabled { opacity: 0.45; cursor: default; }
+  .bp-day select:disabled:hover { border-color: var(--edge); color: var(--ash); }
+
+  .bp-dots { display: flex; flex-wrap: wrap; gap: 3px; min-height: 6px; }
+  .bp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--spadix); }
+  .bp-dot.bp-dot-mine { background: var(--bone); }
+  .bp-dot.bp-dot-house { background: transparent; border: 1px solid var(--spathe); }
+
+  .bp-day.bp-mine { border-color: var(--spadix); }
+  .bp-day.bp-mine select { color: var(--bone); border-color: var(--spadix); }
+  .bp-day.bp-bloomed { background: var(--spathe); border-color: var(--spathe); }
+  .bp-day.bp-bloomed .bp-day-dow, .bp-day.bp-bloomed .bp-day-num { color: #14180F; }
+  .bp-day.bp-bloomed .bp-dot { background: #14180F; border-color: #14180F; }
+  .bp-day.bp-bloomed select { background: #14180F; color: var(--spathe); border-color: #14180F; }
+
+  .bp-submit { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+  .bp-submit .bp-send { margin-top: 0; }
+  .bp-day.bp-draft { border-color: var(--pink); border-style: dashed; }
+  .bp-day.bp-draft select { color: var(--pink); border-color: var(--pink); }
+
+  .bp-status {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--ash);
+    min-height: 16px; margin: 4px 0 0; line-height: 1.5;
+  }
+
+  .bp-guide {
+    margin-top: 18px;
+    border: 1px solid var(--edge);
+    padding: 0 14px;
+  }
+  .bp-guide summary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--spathe);
+    cursor: pointer;
+    padding: 13px 0;
+    list-style: none;
+  }
+  .bp-guide summary::-webkit-details-marker { display: none; }
+  .bp-guide summary::after { content: ' +'; color: var(--ash); }
+  .bp-guide[open] summary::after { content: ' \2013'; }
+  .bp-guide summary:focus-visible { outline: 2px solid var(--spadix); outline-offset: 2px; }
+  .bp-guide ol { margin: 0 0 0 0; padding: 0 0 0 18px; }
+  .bp-guide li {
+    font-size: 13px; color: var(--ash); line-height: 1.6;
+    margin-bottom: 10px; padding-left: 4px;
+  }
+  .bp-guide li::marker { color: var(--spadix); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+  .bp-guide b { color: var(--bone); font-weight: 500; }
+  .bp-guide p {
+    font-size: 12px; color: var(--ash); line-height: 1.6;
+    border-top: 1px solid var(--edge);
+    padding: 12px 0; margin: 4px 0 0;
+  }
+
+  .bp-ticker-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--spathe); margin: 20px 0 8px;
+  }
+  .bp-ticker-label span { color: var(--ash); letter-spacing: 0.06em; text-transform: none; }
+
+  .bp-ticker {
+    margin-top: 16px;
+    border-top: 1px solid var(--edge);
+    border-bottom: 1px solid var(--edge);
+    overflow: hidden; padding: 9px 0; position: relative;
+  }
+  .bp-ticker::before, .bp-ticker::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 32px; z-index: 2; pointer-events: none;
+  }
+  .bp-ticker::before { left: 0; background: linear-gradient(90deg, var(--soil), transparent); }
+  .bp-ticker::after { right: 0; background: linear-gradient(270deg, var(--soil), transparent); }
+  .bp-track { display: flex; gap: 26px; width: max-content; animation: bp-scroll 40s linear infinite; }
+  .bp-ticker:hover .bp-track { animation-play-state: paused; }
+  @keyframes bp-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .bp-tick {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.06em; color: var(--ash);
+    white-space: nowrap; display: flex; gap: 8px; align-items: center;
+  }
+  .bp-tick b { color: var(--bone); font-weight: 500; text-transform: uppercase; }
+  .bp-tick i { font-style: normal; color: var(--spadix); }
+  .bp-tick u {
+    text-decoration: none;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--soil); background: var(--spathe);
+    padding: 2px 6px; white-space: nowrap;
+  }
+  .bp-tick-bloom { color: var(--bone); }
+  .bp-tick-bloom u { background: var(--pink); color: #2B0A14; font-weight: 500; }
+  .bp-tick-bloom i { color: var(--pink); }
+  .bp-tick-news u { background: transparent; color: var(--ash); border: 1px solid var(--edge); }
+  .bp-tick-count { color: #6E7263; }
+  .bp-tick-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--ash); letter-spacing: 0.06em; padding-left: 2px;
+  }
+
+  .bp-winner {
+    border: 1px solid var(--spathe);
+    padding: 15px 16px; margin-top: 16px;
+    font-family: 'Fraunces', Georgia, serif; font-size: 18px; line-height: 1.35;
+  }
+  .bp-winner small {
+    display: block; margin-top: 7px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--spathe);
+  }
+
+  .bp-talk { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--edge); }
+  .bp-talk h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--spathe); margin: 0 0 6px;
+  }
+  .bp-talk .bp-hint { font-size: 12px; color: var(--ash); margin: 0 0 12px; line-height: 1.5; }
+
+  .bp input, .bp textarea {
+    background: var(--loam); border: 1px solid var(--edge); color: var(--bone);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 16px; padding: 11px 12px; border-radius: 0; min-width: 0; width: 100%;
+  }
+  .bp textarea { resize: vertical; min-height: 62px; margin-top: 8px; }
+  .bp input::placeholder, .bp textarea::placeholder { color: #5E6155; }
+  .bp input:focus-visible, .bp textarea:focus-visible,
+  .bp button:focus-visible, .bp select:focus-visible {
+    outline: 2px solid var(--spadix); outline-offset: 2px;
+  }
+
+  .bp-send {
+    background: var(--spadix); color: #14060A; border: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
+    padding: 12px 18px; cursor: pointer; margin-top: 8px;
+  }
+  .bp-send:hover { background: #CC5570; }
+  .bp-send:disabled { opacity: 0.5; cursor: wait; }
+
+  .bp-attach { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .bp-attach input[type="file"] {
+    position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+  }
+  .bp-file {
+    display: inline-block;
+    border: 1px solid var(--edge); color: var(--spathe);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 10px 14px; cursor: pointer;
+  }
+  .bp-file:hover { border-color: var(--spathe); color: var(--bone); }
+  .bp-file-name {
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    color: var(--ash); letter-spacing: 0.06em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px;
+  }
+  .bp-drop {
+    background: none; border: 0; color: var(--ash);
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px; padding: 4px 0;
+  }
+  .bp-drop:hover { color: var(--spadix); }
+  .bp-preview {
+    display: block; margin-top: 10px;
+    max-width: 220px; width: 100%; height: auto;
+    border: 1px solid var(--edge);
+  }
+  .bp-preview[hidden] { display: none; }
+
+  .bp-shot {
+    display: block; margin-top: 10px;
+    max-width: 100%; height: auto;
+    border: 1px solid var(--edge);
+  }
+
+  .bp-comment { padding: 14px 0; border-bottom: 1px solid var(--edge); }
+  .bp-comment-win { border-left: 2px solid var(--pink); padding-left: 12px; }
+  .bp-badge {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: var(--pink); color: #2B0A14; padding: 2px 6px; font-weight: 500;
+  }
+  .bp-claim { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .bp-claim input { flex: 1 1 140px; }
+  .bp-claim .bp-send { margin-top: 0; }
+  .bp-comment:last-child { border-bottom: 0; }
+  .bp-comment-head {
+    display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+    letter-spacing: 0.08em; margin-bottom: 5px;
+  }
+  .bp-who { color: var(--bone); text-transform: uppercase; }
+  .bp-pick { color: var(--ash); }
+  .bp-own { margin-left: auto; display: flex; gap: 10px; }
+  .bp-mini {
+    background: none; border: 0; color: var(--ash);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; padding: 2px 0;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .bp-mini:hover { color: var(--bone); }
+  .bp-mini-go { color: var(--spathe); }
+  .bp-mini-go:hover { color: var(--bone); }
+  .bp-edit {
+    width: 100%; min-height: 70px; resize: vertical;
+    background: var(--loam); border: 1px solid var(--spadix); color: var(--bone);
+    font-family: 'IBM Plex Sans', sans-serif; font-size: 15px;
+    padding: 10px; border-radius: 0;
+  }
+  .bp-editbar { display: flex; gap: 14px; margin-top: 6px; }
+  .bp-comment p { margin: 0; font-size: 15px; line-height: 1.55; }
+  .bp-none { color: var(--ash); font-size: 13px; font-style: italic; padding: 14px 0 0; }
+
+  .bp-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    margin-top: 26px; padding-top: 16px; border-top: 1px solid var(--edge);
+  }
+  .bp-foot p { font-size: 11px; color: var(--ash); margin: 0; line-height: 1.6; max-width: 42ch; }
+  .bp-link {
+    background: none; border: 0; color: var(--ash);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; padding: 8px 0;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .bp-link:hover { color: var(--bone); }
+  .bp-link[aria-pressed="true"] { color: var(--spathe); }
+  .bp-roster-acts { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+  .bp-danger { color: var(--spadix); }
+  .bp-danger:hover { color: var(--pink); }
+  .bp-link:disabled { color: #4A4E42; cursor: default; text-decoration: none; }
+  .bp-link:disabled:hover { color: #4A4E42; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bp * { transition: none !important; }
+    .bp-track { animation: none; width: auto; }
+    .bp-ticker { overflow-x: auto; }
+  }
+
+  @media (max-width: 520px) {
+    .bp { padding: 22px 14px 26px; }
+    .bp-head-row { flex-direction: column; gap: 14px; }
+    .bp-poem-side { max-width: 100%; }
+
+    .bp-grid { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+    .bp-day { padding: 8px 6px; min-height: 82px; }
+    .bp-day select { font-size: 10px; padding: 7px 2px; }
+    .bp-day-num { font-size: 19px; }
+
+    .bp-links { gap: 10px 18px; }
+    .bp-toggle button { padding: 14px 8px; font-size: 11px; }
+    .bp-entry input { flex: 1 1 100%; }
+
+    .bp-submit { flex-direction: column; align-items: stretch; gap: 10px; }
+    .bp-send { width: 100%; }
+
+    .bp-mine { gap: 6px 16px; font-size: 10px; }
+    .bp-foot { flex-direction: column; align-items: flex-start; }
+    .bp-roster table { font-size: 10px; }
+    .bp-roster td, .bp-roster th { padding-right: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bp">
+  <div class="bp-head">
+    <h1 class="bp-title">The Bloom<br><em>Pool</em></h1>
+    <div class="bp-head-row">
+      <div class="bp-head-text">
+        <p class="bp-sub">Two corpse flowers at The Huntington. Nobody knows when they open, but it will be soon! Choose which flower you're calling, Odorysseus or Odora, then pick a day and a window from its dropdown. Each flower has its own pool, so you can enter for both. <span class="bp-prize-inline">Winners receive glory, and a grand prize.</span></p>
+      </div>
+      <div class="bp-poem-side">
+        <span class="bp-poem-vline"></span>
+        <p class="bp-poem">These divas waited years in the wings for one night on stage. Hold your breath, no really!</p>
+        <span class="bp-poem-vline"></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="bp-links">
+    <a href="https://www.huntington.org/botanical-gardens/conservatory/corpse-flower" target="_blank" rel="noopener">Learn more at The Huntington</a>
+    <a href="https://www.youtube.com/watch?v=Jcw0GFAp1wE" target="_blank" rel="noopener">Watch bloom livestream of odorysseus &amp; odora</a>
+  </p>
+
+  <div class="bp-entry">
+    <input id="bp-guess-name" type="text" placeholder="Your name" maxlength="14" autocomplete="off">
+    <span class="bp-entry-note" id="bp-entry-note"></span>
+  </div>
+
+  <div class="bp-toggle" role="group" aria-label="Which flower">
+    <button type="button" id="bp-t-debut" aria-pressed="true">Odorysseus plant</button>
+    <button type="button" id="bp-t-odora" aria-pressed="false">Odora plant</button>
+  </div>
+
+  <p class="bp-mine" id="bp-mine"></p>
+
+  <div class="bp-grid" id="bp-grid"></div>
+
+  <div class="bp-submit">
+    <button type="button" class="bp-send" id="bp-submit" disabled>Lock in my picks</button>
+    <button type="button" class="bp-link" id="bp-undo" hidden>Clear selection</button>
+  </div>
+  <p class="bp-status" id="bp-status">Loading the pool&hellip;</p>
+
+  <details class="bp-guide">
+    <summary>How to read the plant before you pick</summary>
+    <ol>
+      <li><b>Odorysseus is closer.</b> That spadix, the tall center column, has colored up. Odora is still green and shut.</li>
+      <li><b>They open late.</b> Green Boy, The Huntington's 2025 corpse flower, unfurled on the evening of July 30 and peaked overnight around 2am. Bet evening or overnight.</li>
+      <li><b>The window is short.</b> A bloom lasts 24 to 48 hours, but the stink peaks about six hours after it opens and is half gone by breakfast. What you are guessing is the moment it starts.</li>
+      <li><b>Watch the spathe.</b> That's the outer wrap. When it pulls away and shows maroon, the bloom is hours out. Not days.</li>
+      <li><b>The Huntington's own call:</b> both plants bloom &ldquo;in the coming weeks,&rdquo; possibly overlapping, with viewing listed July 2&ndash;31, dates approximate. A window, not a day. Nobody, not even the botanists, can predict the day.</li>
+      <li><b>Fun fact:</b> it's not technically a single flower. It's an inflorescence &mdash; a cluster structure holding hundreds of tiny individual flowers hidden at the base, inside the spathe. Everyone calls it "the flower" anyway, us included.</li>
+    </ol>
+  </details>
+
+  <p class="bp-ticker-label" id="bp-ticker-label">Entries</p>
+  <div class="bp-ticker" id="bp-ticker" aria-label="Entries"></div>
+
+  <div id="bp-winner"></div>
+
+  <section class="bp-talk" id="bp-talk">
+    <h2>Community convo</h2>
+    <p class="bp-hint">If you go see them in person, bring back a photo.</p>
+    <input id="bp-name" type="text" placeholder="Your name" maxlength="14" autocomplete="off">
+    <textarea id="bp-text" placeholder="What do you think it'll smell like? What goes down at The Huntington when it opens? Who faints first?"></textarea>
+    <div class="bp-attach">
+      <label class="bp-file" for="bp-photo">Add a photo</label>
+      <input id="bp-photo" type="file" accept="image/*">
+      <span class="bp-file-name" id="bp-file-name"></span>
+      <button type="button" class="bp-drop" id="bp-drop" hidden>Remove</button>
+    </div>
+    <img id="bp-preview" class="bp-preview" alt="Your photo, ready to post" hidden>
+    <button type="button" class="bp-send" id="bp-post">Post</button>
+    <div id="bp-comments"></div>
+  </section>
+
+  <div class="bp-foot">
+    <p>One pick per flower, no takebacks. Closest window wins; ties go to whoever guessed first.</p>
+    <button type="button" class="bp-link" id="bp-bloom" aria-pressed="false">It bloomed &mdash; mark it</button>
+  </div>
+
+  <details class="bp-roster">
+    <summary>Organizer</summary>
+    <div id="bp-roster-out"></div>
+    <p class="bp-roster-warn">Anyone with this link can see and use these organizer tools &mdash; there's no passphrase gate. For real access control, manage the Airtable base directly.</p>
+  </details>
+</div>
+
+<script>
+(function () {
+  const AT_BASE = 'appQk7FXVdCBZXdoR';
+  const AT_TOKEN = 'pataNjD8xsPSPFmTN';
+  const T_GUESSES = 'Guesses';
+  const T_COMMENTS = 'Comments';
+  const T_BLOOMED = 'Bloomed';
+
+  async function atList(table) {
+    let records = [];
+    let offset;
+    do {
+      const url = 'https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table) +
+        (offset ? ('?offset=' + offset) : '');
+      const res = await fetch(url, { headers: { Authorization: 'Bearer ' + AT_TOKEN } });
+      if (!res.ok) throw new Error('list ' + table + ' failed: ' + res.status);
+      const data = await res.json();
+      if (data.records) records = records.concat(data.records);
+      offset = data.offset;
+    } while (offset);
+    return records;
+  }
+
+  async function atCreate(table, fields) {
+    const res = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table), {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields })
+    });
+    if (!res.ok) throw new Error('create ' + table + ' failed: ' + res.status);
+    return res.json();
+  }
+
+  async function atUpdate(table, id, fields) {
+    const res = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table) + '/' + id, {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fields })
+    });
+    if (!res.ok) throw new Error('update ' + table + ' failed: ' + res.status);
+    return res.json();
+  }
+
+  async function atDelete(table, id) {
+    const res = await fetch('https://api.airtable.com/v0/' + AT_BASE + '/' + encodeURIComponent(table) + '/' + id, {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer ' + AT_TOKEN }
+    });
+    if (!res.ok) throw new Error('delete ' + table + ' failed: ' + res.status);
+  }
+
+  async function atUploadAttachment(recordId, fieldName, dataUrl) {
+    const commaIdx = dataUrl.indexOf(',');
+    const meta = dataUrl.slice(5, commaIdx);
+    const contentType = meta.split(';')[0];
+    const base64 = dataUrl.slice(commaIdx + 1);
+    const res = await fetch(
+      'https://content.airtable.com/v0/' + AT_BASE + '/' + recordId + '/' + encodeURIComponent(fieldName) + '/uploadAttachment',
+      {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + AT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contentType, file: base64, filename: 'photo.jpg' })
+      }
+    );
+    if (!res.ok) throw new Error('upload failed: ' + res.status);
+    return res.json();
+  }
+
+  function shrink(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('read'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('decode'));
+        img.onload = () => {
+          const max = 900;
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const c = document.createElement('canvas');
+          c.width = Math.round(img.width * scale);
+          c.height = Math.round(img.height * scale);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          let out = c.toDataURL('image/jpeg', 0.72);
+          if (out.length > 3_000_000) out = c.toDataURL('image/jpeg', 0.5);
+          resolve(out);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  let pendingPhoto = null;
+
+  const NAMES = { debut: 'Odorysseus', odora: 'Odora' };
+  const BANDS = [
+    { id: 'am',    label: 'Morning',   hour: 9 },
+    { id: 'pm',    label: 'Afternoon', hour: 15 },
+    { id: 'eve',   label: 'Evening',   hour: 20 },
+    { id: 'night', label: 'Overnight', hour: 25 }
+  ];
+  const DAYS = [];
+  for (let d = 9; d <= 31; d++) DAYS.push(new Date(2026, 6, d));
+
+  const HOUSE = [
+    { id: 'house-1', house: true, plant: 'debut', day: 10, band: 'eve',   at: 1 },
+    { id: 'house-2', house: true, plant: 'debut', day: 12, band: 'night', at: 2 },
+    { id: 'house-3', house: true, plant: 'debut', day: 15, band: 'pm',    at: 3 },
+    { id: 'house-4', house: true, plant: 'odora', day: 17, band: 'eve',   at: 4 }
+  ];
+
+  const NEWS = [
+    { at: Date.parse('2026-07-02T09:00'), text: 'Both plants on view, Rose Hills Conservatory' },
+    { at: Date.parse('2026-07-02T09:01'), text: 'Viewing window July 2\u201331, dates approximate' }
+  ];
+
+  let guesses = [];
+  let comments = [];
+  let bloomed = {};
+  let me = '';
+  let plant = 'debut';
+  let bloomMode = false;
+  let draft = {};
+
+  const $ = (id) => document.getElementById(id);
+  const say = (m) => { $('bp-status').textContent = m; };
+  const esc = (s) => { const e = document.createElement('div'); e.textContent = s; return e.innerHTML; };
+  const band = (id) => BANDS.find(b => b.id === id) || BANDS[0];
+  const clock = (g) => g.day * 24 + band(g.band).hour;
+  const label = (g) => 'July ' + g.day + ' ' + band(g.band).label.toLowerCase();
+  const myGuesses = () => guesses.filter(g => g.id === me);
+
+  function currentName() {
+    return $('bp-guess-name').value.trim();
+  }
+
+  async function load() {
+    say('Loading the pool\u2026');
+    try {
+      const [gRecs, cRecs, bRecs] = await Promise.all([
+        atList(T_GUESSES), atList(T_COMMENTS), atList(T_BLOOMED)
+      ]);
+
+      guesses = gRecs.map(r => ({
+        recId: r.id,
+        id: (r.fields.WatcherId || '').toLowerCase(),
+        name: r.fields.Name || '',
+        plant: r.fields.Plant,
+        day: r.fields.Day,
+        band: r.fields.Band,
+        at: r.fields.At || 0,
+        house: !!r.fields.House
+      }));
+
+      comments = cRecs.map(r => ({
+        recId: r.id,
+        name: r.fields.Name || '',
+        text: r.fields.Text || '',
+        photo: (r.fields.Photo && r.fields.Photo[0] && r.fields.Photo[0].url) || r.fields.PhotoUrl || '',
+        by: (r.fields.WatcherId || '').toLowerCase(),
+        winner: r.fields.Winner || '',
+        at: r.fields.At || 0,
+        edited: !!r.fields.Edited
+      }));
+
+      bloomed = {};
+      bRecs.forEach(r => {
+        bloomed[r.fields.Plant] = { recId: r.id, day: r.fields.Day, band: r.fields.Band, at: r.fields.At || 0 };
+      });
+
+      HOUSE.forEach(h => { if (!guesses.some(g => g.id === h.id)) guesses.push({ ...h, recId: null }); });
+
+      say('Choose a window. Nothing is final until you lock it in.');
+    } catch (e) {
+      say('Could not load the pool. Check your connection and reload.');
+    }
+    render();
+  }
+
+  function renderGrid() {
+    const bloom = bloomed[plant];
+    const locked = !bloomMode && myGuesses().some(g => g.plant === plant && me);
+
+    $('bp-grid').innerHTML = DAYS.map(d => {
+      const n = d.getDate();
+      const here = guesses.filter(g => g.plant === plant && g.day === n);
+      const mine = me ? here.find(g => g.id === me) : null;
+      const isBloom = bloom && bloom.day === n;
+      const dr = draft[plant];
+      const isDraft = !locked && dr && dr.day === n;
+
+      const cls = ['bp-day'];
+      if (mine) cls.push('bp-mine');
+      if (isDraft) cls.push('bp-draft');
+      if (isBloom) cls.push('bp-bloomed');
+
+      const selected = mine ? mine.band : (isDraft ? dr.band : (isBloom ? bloom.band : ''));
+      const opts = ['<option value="">&mdash;</option>'].concat(
+        BANDS.map(b => '<option value="' + b.id + '"' + (b.id === selected ? ' selected' : '') + '>' + b.label + '</option>')
+      ).join('');
+
+      const dots = here.map(g => {
+        const k = (me && g.id === me) ? ' bp-dot-mine' : (g.house ? ' bp-dot-house' : '');
+        return '<span class="bp-dot' + k + '"></span>';
+      }).join('');
+
+      return '<div class="' + cls.join(' ') + '">' +
+        '<div class="bp-day-top">' +
+          '<span class="bp-day-num">' + n + '</span>' +
+          '<span class="bp-day-dow">' + d.toLocaleDateString(undefined, { weekday: 'short' }) + '</span>' +
+        '</div>' +
+        '<select data-day="' + n + '"' + ((locked || (bloom && !bloomMode)) ? ' disabled' : '') +
+          ' aria-label="July ' + n + ' window, ' + here.length + ' entries">' + opts + '</select>' +
+        '<div class="bp-dots">' + dots + '</div>' +
+      '</div>';
+    }).join('');
+
+    $('bp-grid').querySelectorAll('select').forEach(el => {
+      el.addEventListener('change', () => pick(Number(el.dataset.day), el.value));
+    });
+  }
+
+  function renderTicker() {
+    const watchers = Math.max(3, new Set(guesses.map(g => g.id).filter(Boolean)).size);
+    $('bp-ticker-label').innerHTML = 'Entries <span>&mdash; ' + watchers + (watchers === 1 ? ' watcher' : ' watchers') + '</span>';
+
+    const groups = {};
+    guesses.forEach(g => {
+      const k = g.plant + '|' + g.day + '|' + g.band;
+      if (!groups[k]) groups[k] = { n: 0, at: 0, g };
+      groups[k].n += 1;
+      groups[k].at = Math.max(groups[k].at, g.at);
+    });
+
+    const feed = Object.values(groups).map(x => ({
+      at: x.at,
+      html: '<u>' + (x.n === 1 ? '1 watcher' : x.n + ' watchers') + '</u><i>&rarr;</i>' +
+            label(x.g) + ' &middot; ' + NAMES[x.g.plant]
+    }));
+
+    feed.push({
+      at: Date.now(),
+      cls: '',
+      html: '<u>Live</u><i>&rarr;</i>' + watchers + (watchers === 1 ? ' watcher' : ' watchers') + ' so far'
+    });
+
+    Object.keys(bloomed).forEach(p => {
+      const b = bloomed[p];
+      feed.push({
+        at: b.at || Date.now(),
+        cls: ' bp-tick-bloom',
+        html: '<u>Bloom</u><i>&rarr;</i>' + NAMES[p] + ' opened ' + label(b)
+      });
+    });
+
+    NEWS.forEach(n => feed.push({
+      at: n.at,
+      cls: ' bp-tick-news',
+      html: '<u>Huntington</u><i>&rarr;</i>' + n.text
+    }));
+
+    if (!feed.length) {
+      $('bp-ticker').innerHTML = '<span class="bp-tick-empty">No entries yet.</span>';
+      return;
+    }
+
+    const items = feed.sort((a, b) => b.at - a.at)
+      .map(f => '<span class="bp-tick' + (f.cls || '') + '">' + f.html + '</span>')
+      .join('');
+
+    $('bp-ticker').innerHTML = '<div class="bp-track">' + items + items + '</div>';
+    $('bp-ticker').querySelector('.bp-track').style.animationDuration = Math.max(16, feed.length * 6) + 's';
+  }
+
+  function renderWinner() {
+    $('bp-winner').innerHTML = Object.keys(bloomed).map(p => {
+      const b = bloomed[p];
+      const pool = guesses.filter(g => g.plant === p && !g.house);
+      if (!pool.length) return '';
+      const target = clock(b);
+      const best = pool.map(g => ({ ...g, off: Math.abs(clock(g) - target) }))
+                       .sort((x, y) => x.off - y.off || x.at - y.at)[0];
+      const off = best.off === 0 ? 'Exact.' : 'Off by ' + best.off + (best.off === 1 ? ' hour.' : ' hours.');
+
+      const claimed = comments.find(c => c.winner === p);
+      let tail;
+      if (claimed) {
+        tail = '<small>Claimed by ' + esc(claimed.name) + '.</small>';
+      } else if (me && best.id === me) {
+        tail = '<small>That was you.</small>' +
+               '<div class="bp-claim">' +
+                 '<input id="bp-claim-name-' + p + '" type="text" placeholder="Your name" maxlength="14" autocomplete="off">' +
+                 '<button type="button" class="bp-send" data-claim="' + p + '">Claim it</button>' +
+               '</div>';
+      } else {
+        tail = '<small>Unclaimed. Only the watcher who picked it can claim.</small>';
+      }
+
+      return '<div class="bp-winner">' + NAMES[p] + ' opened ' + label(b) + '. ' +
+        'The winning guess was ' + label(best) + '. ' + off + tail + '</div>';
+    }).join('');
+
+    $('bp-winner').querySelectorAll('[data-claim]').forEach(btn =>
+      btn.addEventListener('click', () => claim(btn.dataset.claim)));
+  }
+
+  async function claim(p) {
+    const input = $('bp-claim-name-' + p);
+    const name = input.value.trim();
+    if (!name) return input.focus();
+    if (comments.some(c => c.winner === p)) return render();
+
+    try {
+      const rec = await atCreate(T_COMMENTS, {
+        Name: name, Text: 'Called ' + NAMES[p] + '.', Winner: p, WatcherId: me, At: Date.now()
+      });
+      comments.push({ recId: rec.id, name, text: 'Called ' + NAMES[p] + '.', winner: p, by: me, at: Date.now(), photo: '' });
+      render();
+    } catch (e) { say('Could not save the claim. Try again.'); }
+  }
+
+  function renderTalk() {
+    if (!comments.length) { $('bp-comments').innerHTML = ''; return; }
+
+    $('bp-comments').innerHTML = comments.slice().reverse().map(c => {
+      const mine = c.by && c.by === me && !c.winner;
+      return '<div class="bp-comment' + (c.winner ? ' bp-comment-win' : '') + '" data-rec="' + c.recId + '">' +
+        '<div class="bp-comment-head">' +
+          '<span class="bp-who">' + esc(c.name) + '</span>' +
+          (c.winner ? '<span class="bp-badge">Winner</span>' : '') +
+          (c.edited ? '<span class="bp-pick">edited</span>' : '') +
+          (mine ? '<span class="bp-own">' +
+            '<button type="button" class="bp-mini" data-edit="' + c.recId + '">Edit</button>' +
+            '<button type="button" class="bp-mini" data-del="' + c.recId + '">Delete</button>' +
+          '</span>' : '') +
+        '</div>' +
+        '<p>' + esc(c.text) + '</p>' +
+        (c.photo ? '<img class="bp-shot" src="' + esc(c.photo) + '" alt="Photo from ' + esc(c.name) + '">' : '') +
+      '</div>';
+    }).join('');
+
+    $('bp-comments').querySelectorAll('[data-edit]').forEach(b =>
+      b.addEventListener('click', () => startEdit(b.dataset.edit)));
+    $('bp-comments').querySelectorAll('[data-del]').forEach(b =>
+      b.addEventListener('click', () => remove(b.dataset.del)));
+  }
+
+  function startEdit(recId) {
+    const c = comments.find(x => x.recId === recId);
+    const el = $('bp-comments').querySelector('[data-rec="' + recId + '"]');
+    if (!c || !el) return;
+
+    const p = el.querySelector('p');
+    const box = document.createElement('textarea');
+    box.className = 'bp-edit';
+    box.value = c.text;
+
+    const bar = document.createElement('div');
+    bar.className = 'bp-editbar';
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button'; saveBtn.className = 'bp-mini bp-mini-go'; saveBtn.textContent = 'Save';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button'; cancelBtn.className = 'bp-mini'; cancelBtn.textContent = 'Cancel';
+    bar.append(saveBtn, cancelBtn);
+
+    p.replaceWith(box);
+    box.after(bar);
+    box.focus();
+
+    cancelBtn.addEventListener('click', renderTalk);
+    saveBtn.addEventListener('click', async () => {
+      const text = box.value.trim();
+      if (!text && !c.photo) return box.focus();
+      try {
+        await atUpdate(T_COMMENTS, c.recId, { Text: text, Edited: true });
+        c.text = text; c.edited = true;
+        renderTalk();
+      } catch (e) { say('Could not save the edit.'); }
+    });
+  }
+
+  async function remove(recId) {
+    const c = comments.find(x => x.recId === recId);
+    if (!c) return;
+    try {
+      await atDelete(T_COMMENTS, recId);
+      comments = comments.filter(x => x.recId !== recId);
+      renderTalk();
+    } catch (e) { say('Could not delete that comment.'); }
+  }
+
+  $('bp-photo').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { say('That is not an image.'); return; }
+    $('bp-file-name').textContent = 'Resizing\u2026';
+    try {
+      pendingPhoto = await shrink(file);
+      $('bp-preview').src = pendingPhoto;
+      $('bp-preview').hidden = false;
+      $('bp-drop').hidden = false;
+      $('bp-file-name').textContent = file.name;
+    } catch (err) {
+      pendingPhoto = null;
+      $('bp-file-name').textContent = 'Could not read that image.';
+    }
+  });
+
+  $('bp-drop').addEventListener('click', () => {
+    pendingPhoto = null;
+    $('bp-photo').value = '';
+    $('bp-preview').hidden = true;
+    $('bp-drop').hidden = true;
+    $('bp-file-name').textContent = '';
+  });
+
+  function renderMine() {
+    const mine = myGuesses();
+    const note = $('bp-entry-note');
+
+    if (!me || (!mine.length && Object.keys(draft).length)) {
+      $('bp-mine').hidden = false;
+      note.textContent = '';
+      note.className = 'bp-entry-note';
+      $('bp-mine').innerHTML =
+        '<span class="bp-mine-who">Not locked in yet</span>' +
+        ['debut', 'odora'].map(p => draft[p]
+          ? '<span><i class="bp-pending">\u25cf</i>' + NAMES[p] + ' <b>' + label(draft[p]) + '</b></span>'
+          : '<span><i class="bp-no">\u25cb</i>' + NAMES[p] + ' <em>no pick yet</em></span>').join('');
+      return;
+    }
+
+    if (!mine.length) {
+      $('bp-mine').hidden = true;
+      note.textContent = '';
+      note.className = 'bp-entry-note';
+      return;
+    }
+
+    note.textContent = 'Saved as ' + me + '.';
+    note.className = 'bp-entry-note bp-ok';
+
+    const both = mine.length === 2;
+    $('bp-mine').hidden = false;
+    $('bp-mine').innerHTML =
+      '<span class="bp-mine-who">' + (both ? 'Both picks in' : 'One pick in') + '</span>' +
+      ['debut', 'odora'].map(p => {
+        const g = mine.find(x => x.plant === p);
+        if (g) return '<span><i class="bp-yes">\u2713</i>' + NAMES[p] + ' <b>' + label(g) + '</b></span>';
+        if (draft[p]) return '<span><i class="bp-pending">\u25cf</i>' + NAMES[p] + ' <b>' + label(draft[p]) + '</b> <em>not locked</em></span>';
+        return '<span><i class="bp-no">\u25cb</i>' + NAMES[p] + ' <em>no pick yet</em></span>';
+      }).join('');
+  }
+
+  function render() { renderMine(); renderGrid(); paintSubmit(); renderTicker(); renderWinner(); renderTalk(); paintBloomLink(); renderRoster(); }
+
+  async function pick(day, bandId) {
+    if (bloomMode) {
+      bloomMode = false;
+      $('bp-bloom').setAttribute('aria-pressed', 'false');
+      if (!bandId) return render();
+      if (bloomed[plant]) { render(); return say(NAMES[plant] + ' is already recorded.'); }
+      try {
+        const rec = await atCreate(T_BLOOMED, { Plant: plant, Day: day, Band: bandId, At: Date.now() });
+        bloomed[plant] = { recId: rec.id, day, band: bandId, at: Date.now() };
+        say(NAMES[plant] + ' opened ' + label({ day, band: bandId }) + '.');
+        render();
+      } catch (e) { say('Could not save the bloom. Try again.'); }
+      return;
+    }
+
+    if (bloomed[plant]) { render(); return say(NAMES[plant] + ' already opened. Picks are closed.'); }
+    if (!me) { $('bp-guess-name').focus(); return say('Add your name first.'); }
+    if (myGuesses().some(g => g.plant === plant)) { render(); return say(NAMES[plant] + ' is already locked in.'); }
+
+    if (!bandId) { delete draft[plant]; render(); return say('Selection cleared.'); }
+
+    draft[plant] = { day, band: bandId };
+    render();
+    say('Selected ' + label(draft[plant]) + ' for ' + NAMES[plant] + '. Not final yet.');
+  }
+
+  function paintSubmit() {
+    const pending = Object.keys(draft).length;
+    $('bp-submit').disabled = pending === 0;
+    $('bp-submit').textContent = pending > 1 ? 'Lock in both picks' : 'Lock in my pick';
+    $('bp-undo').hidden = pending === 0;
+  }
+
+  $('bp-guess-name').addEventListener('change', () => {
+    me = currentName().toLowerCase();
+    render();
+  });
+
+  $('bp-submit').addEventListener('click', async () => {
+    const pending = Object.keys(draft);
+    if (!pending.length) return;
+
+    const who = currentName();
+    if (!who) { $('bp-guess-name').focus(); return say('Add your name first.'); }
+    me = who.toLowerCase();
+
+    $('bp-submit').disabled = true;
+    try {
+      for (const pl of pending) {
+        if (bloomed[pl] || myGuesses().some(g => g.plant === pl)) continue;
+        const at = Date.now();
+        const rec = await atCreate(T_GUESSES, {
+          WatcherId: me, Name: who, Plant: pl, Day: draft[pl].day, Band: draft[pl].band, At: at, House: false
+        });
+        guesses.push({ recId: rec.id, id: me, name: who, plant: pl, day: draft[pl].day, band: draft[pl].band, at, house: false });
+      }
+      const n = pending.length;
+      draft = {};
+      say(n > 1 ? 'Both picks locked in. No takebacks.' : 'Locked in. No takebacks.');
+      render();
+    } catch (e) {
+      say('Could not save your pick. Try again.');
+      render();
+    }
+  });
+
+  $('bp-undo').addEventListener('click', () => {
+    draft = {};
+    render();
+    say('Selection cleared.');
+  });
+
+  $('bp-post').addEventListener('click', async () => {
+    const name = $('bp-name').value.trim();
+    const text = $('bp-text').value.trim();
+    if (!name) { $('bp-name').focus(); return; }
+    if (!text && !pendingPhoto) { $('bp-text').focus(); return; }
+
+    $('bp-post').disabled = true;
+    try {
+      const at = Date.now();
+      const rec = await atCreate(T_COMMENTS, { Name: name, Text: text, WatcherId: me, At: at });
+
+      let photoUrl = '';
+      if (pendingPhoto) {
+        try {
+          const uploadRes = await atUploadAttachment(rec.id, 'Photo', pendingPhoto);
+          const arr = uploadRes.fields && uploadRes.fields.Photo;
+          if (arr && arr[0]) photoUrl = arr[0].url;
+        } catch (e) {
+          say('Posted, but the photo failed to upload. Check that the Comments table has a Photo attachment field.');
+        }
+      }
+
+      comments.push({ recId: rec.id, name, text, photo: photoUrl, by: me, at, winner: '', edited: false });
+      $('bp-text').value = '';
+      pendingPhoto = null;
+      $('bp-photo').value = '';
+      $('bp-preview').hidden = true;
+      $('bp-drop').hidden = true;
+      $('bp-file-name').textContent = '';
+      renderTalk();
+    } catch (e) { say('Could not post. Try again.'); }
+    $('bp-post').disabled = false;
+  });
+
+  ['debut', 'odora'].forEach(p => {
+    $('bp-t-' + p).addEventListener('click', () => {
+      plant = p;
+      $('bp-t-debut').setAttribute('aria-pressed', String(p === 'debut'));
+      $('bp-t-odora').setAttribute('aria-pressed', String(p === 'odora'));
+      const other = p === 'debut' ? 'odora' : 'debut';
+      const held = myGuesses().find(g => g.plant === other);
+      const own = myGuesses().find(g => g.plant === p);
+      say(own
+        ? NAMES[p] + ' is locked in: ' + label(own) + '.'
+        : held
+          ? NAMES[p] + ' is open. Your ' + NAMES[other] + ' pick is locked in: ' + label(held) + '.'
+          : 'Guessing on ' + NAMES[p] + '.');
+      render();
+    });
+  });
+
+  function watcherNumbers() {
+    const n = {};
+    guesses.slice().sort((a, b) => a.at - b.at).forEach(g => {
+      if (g.id && !(g.id in n)) n[g.id] = Object.keys(n).length + 1;
+    });
+    return n;
+  }
+
+  function renderRoster() {
+    const n = watcherNumbers();
+    const rows = guesses.slice()
+      .sort((a, b) => (n[a.id] || 0) - (n[b.id] || 0) || a.at - b.at)
+      .map(g => '<tr>' +
+        '<td>' + (n[g.id] || '\u2014') + '</td>' +
+        '<td class="bp-r-name">' + (g.name ? esc(g.name) : '\u2014') + '</td>' +
+        '<td>' + NAMES[g.plant] + '</td>' +
+        '<td>' + label(g) + '</td>' +
+      '</tr>').join('');
+
+    $('bp-roster-out').innerHTML =
+      '<table><thead><tr><th>#</th><th>Name</th><th>Flower</th><th>Pick</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table>' +
+      '<div class="bp-roster-acts">' +
+        '<button type="button" class="bp-link" id="bp-clear">Clear my entries</button>' +
+        '<button type="button" class="bp-link bp-danger" id="bp-wipe">Reset the whole board</button>' +
+      '</div>';
+    $('bp-clear').addEventListener('click', clearMine);
+    $('bp-wipe').addEventListener('click', wipe);
+  }
+
+  async function clearMine() {
+    if (!me) return say('Enter your name first to identify your entries.');
+    const mine = guesses.filter(g => g.id === me && g.recId);
+    const myComments = comments.filter(c => c.by === me && c.recId);
+    try {
+      for (const g of mine) await atDelete(T_GUESSES, g.recId);
+      for (const c of myComments) await atDelete(T_COMMENTS, c.recId);
+      guesses = guesses.filter(g => g.id !== me);
+      comments = comments.filter(c => c.by !== me);
+      draft = {};
+      $('bp-guess-name').value = '';
+      me = '';
+      say('Your entries are cleared. Pick again.');
+      render();
+    } catch (e) { say('Could not clear all entries. Try again.'); }
+  }
+
+  async function wipe() {
+    if ($('bp-wipe').dataset.armed !== '1') {
+      $('bp-wipe').dataset.armed = '1';
+      $('bp-wipe').textContent = 'Sure? This erases everyone.';
+      return;
+    }
+    try {
+      for (const g of guesses.filter(g => g.recId)) await atDelete(T_GUESSES, g.recId);
+      for (const c of comments.filter(c => c.recId)) await atDelete(T_COMMENTS, c.recId);
+      for (const p of Object.keys(bloomed)) if (bloomed[p].recId) await atDelete(T_BLOOMED, bloomed[p].recId);
+      guesses = []; comments = []; bloomed = {};
+      HOUSE.forEach(x => guesses.push({ ...x, recId: null }));
+      draft = {};
+      $('bp-guess-name').value = '';
+      me = '';
+      say('Board reset.');
+      render();
+    } catch (e) { say('Could not fully reset. Reload and try again.'); }
+  }
+
+  $('bp-bloom').addEventListener('click', () => {
+    if (bloomed[plant]) return say(NAMES[plant] + ' is already recorded. It cannot be changed.');
+    bloomMode = !bloomMode;
+    $('bp-bloom').setAttribute('aria-pressed', String(bloomMode));
+    render();
+    say(bloomMode ? 'Pick the window ' + NAMES[plant] + ' actually opened.' : 'Pick a window on any day.');
+  });
+
+  function paintBloomLink() {
+    const done = !!bloomed[plant];
+    $('bp-bloom').disabled = done;
+    $('bp-bloom').textContent = done
+      ? NAMES[plant] + ' \u2014 recorded'
+      : 'It bloomed \u2014 mark it';
+  }
+
+  load();
+})();
+</script>
+
+</body>
+</html>
