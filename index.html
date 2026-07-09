@@ -6,7 +6,6 @@
 <title>The Bloom Pool</title>
 <meta name="description" content="Guess when the corpse flowers at The Huntington will bloom. A friendly pool for Odorysseus and Odora.">
 
-<!-- Social preview tags — replace the og:image URL below with your own hosted image -->
 <meta property="og:title" content="The Bloom Pool">
 <meta property="og:description" content="Two corpse flowers at The Huntington. Nobody knows when they open, but it will be soon! Guess the window, enter the pool.">
 <meta property="og:image" content="REPLACE_WITH_YOUR_IMAGE_URL.jpg">
@@ -59,7 +58,7 @@
     justify-content: center;
     border: 1px solid var(--spadix);
     padding: 12px 14px;
-
+  }
   .bp-poem {
     font-family: 'Fraunces', Georgia, serif;
     font-style: italic;
@@ -464,9 +463,9 @@
       <div class="bp-head-text">
         <p class="bp-sub">Two corpse flowers at The Huntington. Nobody knows when they open, but it will be soon! Choose which flower you're calling, Odorysseus or Odora, then pick a day and a window from its dropdown. Each flower has its own pool, so you can enter for both. <span class="bp-prize-inline">Winners receive glory, and a grand prize.</span></p>
       </div>
-    <div class="bp-poem-side">
-  <p class="bp-poem">These divas waited years in the wings for one night on stage. Hold your breath, no really!</p>
-</div>
+      <div class="bp-poem-side">
+        <p class="bp-poem">These divas waited years in the wings for one night on stage. Hold your breath, no really!</p>
+      </div>
     </div>
   </div>
 
@@ -1012,7 +1011,6 @@
     }
 
     if (bloomed[plant]) { render(); return say(NAMES[plant] + ' already opened. Picks are closed.'); }
-
     if (myGuesses().some(g => g.plant === plant)) { render(); return say(NAMES[plant] + ' is already locked in.'); }
 
     if (!bandId) { delete draft[plant]; render(); return say('Selection cleared.'); }
